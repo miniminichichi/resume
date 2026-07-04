@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import puppeteer from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
 import { execSync } from 'child_process';
-
+import path from 'path';
 /**
  * PDF 생성 API 엔드포인트
  * Puppeteer-core + @sparticuz/chromium를 사용하여 현재 이력서 페이지를 PDF로 변환
@@ -17,10 +17,12 @@ export async function POST(request: NextRequest) {
         // 먼저 @sparticuz/chromium 시도 (Vercel 환경에서 최적화됨)
         try {
             chromium.setGraphicsMode = false;
+            const executablePath = await chromium.executablePath();
+            process.env.LD_LIBRARY_PATH = path.dirname(executablePath);
             browser = await puppeteer.launch({
                 args: chromium.args,
                 defaultViewport: chromium.defaultViewport,
-                executablePath: await chromium.executablePath(),
+                executablePath: executablePath,
                 headless: chromium.headless,
             });
             console.log('Using @sparticuz/chromium');
