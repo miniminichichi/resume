@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
 
         // 먼저 @sparticuz/chromium 시도 (Vercel 환경에서 최적화됨)
         try {
+            chromium.setGraphicsMode = false;
             browser = await puppeteer.launch({
                 args: chromium.args,
                 defaultViewport: chromium.defaultViewport,
